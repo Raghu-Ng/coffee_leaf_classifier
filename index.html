@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Leaf Disease Classifier</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; }
+        h1 { color: #333; }
+        #uploadForm { margin: 20px 0; }
+        #result { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Coffee Leaf Disease Classifier</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <button type="submit">Classify</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#uploadForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: '/',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if(data.error) {
+                            $('#result').text('Error: ' + data.error);
+                        } else {
+                            $('#result').html('Prediction: ' + data.prediction + '<br>Confidence: ' + (data.confidence * 100).toFixed(2) + '%');
+                        }
+                    },
+                    error: function() {
+                        $('#result').text('An error occurred during the request.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
